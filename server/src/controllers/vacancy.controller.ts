@@ -1,24 +1,22 @@
-import { Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+
+import { Vacancy } from '../models/domain/vacancy.model';
+import { VacancyService } from '../services/vacancy.service';
 
 @Controller('vacancy')
 export class VacancyController {
+	constructor(private controller: VacancyService) {}
+	
 	@Get()
-	getVacancies() {
-		return {
-			message: 'working'
-		}
+	async getVacancies() {
+		return await this.controller.getVacancies()
 	}
 	@Get(':id')
-	getVacancyById(@Param('id') id: number) {
-		return {
-			id,
-			vacancy: `Vacancy ${id}`
-		}
+	async getVacancyById(@Param('id', ParseUUIDPipe) id: string) {
+		return await this.controller.getVacancyById(id)
 	}
 	@Post()
-	createVacancy() {
-		return new Promise((resolve) => {
-			setTimeout(() => resolve({ message: 'Vacancy created' }), 2500)
-		})
+	async createVacancy(@Body() body: Vacancy) {
+		await this.controller.createVacancy(body)
 	}
 }
