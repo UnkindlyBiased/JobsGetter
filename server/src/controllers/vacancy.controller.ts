@@ -1,22 +1,27 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import { Body, Controller, Get, NotFoundException, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 
-import { Vacancy } from '../models/domain/vacancy.model';
 import { VacancyService } from '../services/vacancy.service';
+import { CreateVacancyDto } from '../models/dto/vacancy/create-vacancy.dto';
 
-@Controller('vacancy')
+@Controller('vacancies')
 export class VacancyController {
-	constructor(private controller: VacancyService) {}
+	constructor(private service: VacancyService) {}
 	
 	@Get()
-	async getVacancies() {
-		return await this.controller.getVacancies()
+	getVacancies() {
+		return this.service.getVacancies()
 	}
 	@Get(':id')
 	async getVacancyById(@Param('id', ParseUUIDPipe) id: string) {
-		return await this.controller.getVacancyById(id)
+		const vacancy = await this.service.getVacancyById(id)
+		if (!vacancy) {
+			throw new NotFoundException('Vacancy was not found')
+		}
+
+		return vacancy
 	}
 	@Post()
-	async createVacancy(@Body() body: Vacancy) {
-		await this.controller.createVacancy(body)
+	createVacancy(@Body() body: CreateVacancyDto) {
+		this.service.createVacancy(body)
 	}
 }

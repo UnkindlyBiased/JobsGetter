@@ -1,17 +1,11 @@
-import { Transform } from "class-transformer"
-import { IsEnum, IsOptional, IsString, IsUUID } from "class-validator"
-
+import { IsOptional, IsString } from "class-validator"
+import { Vacancy } from "../../domain/vacancy.model"
 import { PositionType } from "../../../../utils/types/PositionType"
 
-export class Vacancy {
-    @IsUUID()
-    id: string
-
+export class CreateVacancyDto {
     @IsString()
     name: string
 
     @IsOptional()
-    @IsEnum(PositionType)
-    @Transform(({ value }) => ('' + value).toLowerCase())
-    experience: PositionType
+    positionLevel: PositionType
 }

@@ -13,5 +13,5 @@ export class Vacancy {
     @IsOptional()
     @IsEnum(PositionType)
     @Transform(({ value }) => ('' + value).toLowerCase())
-    experience: PositionType
+    positionLevel: PositionType
 }
