@@ -1,7 +1,7 @@
 import { IsEnum, IsOptional, IsString, IsUUID } from 'class-validator'
 import { Transform } from 'class-transformer'
 
-import { PositionType } from '../../../utils/types/PositionType'
+import { PositionType } from '../../../utils/types/position-level.type'
 
 export class Vacancy {
     @IsUUID()

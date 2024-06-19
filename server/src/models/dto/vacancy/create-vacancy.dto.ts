@@ -1,11 +1,14 @@
 import { IsOptional, IsString } from "class-validator"
-import { Vacancy } from "../../domain/vacancy.model"
-import { PositionType } from "../../../../utils/types/PositionType"
+import { Expose } from "class-transformer"
+
+import { PositionType } from "../../../../utils/types/position-level.type"
 
 export class CreateVacancyDto {
     @IsString()
+    @Expose()
     name: string
 
     @IsOptional()
+    @Expose()
     positionLevel: PositionType
 }

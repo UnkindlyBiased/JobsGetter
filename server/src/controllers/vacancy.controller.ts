@@ -2,6 +2,7 @@ import { Body, Controller, Get, NotFoundException, Param, ParseUUIDPipe, Post } 
 
 import { VacancyService } from '../services/vacancy.service';
 import { CreateVacancyDto } from '../models/dto/vacancy/create-vacancy.dto';
+import { Serialize } from '../../utils/decorators/serialization.decorator';
 
 @Controller('vacancies')
 export class VacancyController {
@@ -11,6 +12,8 @@ export class VacancyController {
 	getVacancies() {
 		return this.service.getVacancies()
 	}
+
+	@Serialize(CreateVacancyDto)
 	@Get(':id')
 	async getVacancyById(@Param('id', ParseUUIDPipe) id: string) {
 		const vacancy = await this.service.getVacancyById(id)
@@ -20,6 +23,7 @@ export class VacancyController {
 
 		return vacancy
 	}
+
 	@Post()
 	createVacancy(@Body() body: CreateVacancyDto) {
 		this.service.createVacancy(body)
