@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from "typeorm";
 
 import { PositionType } from "../../../utils/types/position-level.type";
 
@@ -10,10 +10,28 @@ export class VacancyEntity {
     @Column()
     name: string
 
+    @Column()
+    description: string
+
+    @Column()
+    minOrDefaultPaycheck: number
+
+    @Column({ nullable: true })
+    maxPaycheck: number
+
     @Column({ 
         type: 'enum',
         enum: PositionType,
         nullable: true
     })
     positionLevel: PositionType
+
+    @Column({ default: false })
+    isClosed: boolean
+
+    @CreateDateColumn()
+    creationDate: Date
+
+    @Column({ default: 0 })
+    views: number
 }
