@@ -1,21 +1,26 @@
-import { Body, Controller, Get, NotFoundException, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, ParseUUIDPipe, Patch, Post, Put, Query } from '@nestjs/common';
 
 import { VacancyService } from '../services/vacancy.service';
 import { CreateVacancyDto } from '../models/dto/vacancy/create-vacancy.dto';
 import { GetVacanciesParams } from '../models/dto/vacancy/get-vacancies.params.dto';
+import { PaginationParams } from '../../utils/types/query/pagination-params';
+import { EditVacancyDto } from '../models/dto/vacancy/edit-vacancy.dto';
 
 @Controller('vacancies')
 export class VacancyController {
 	constructor(private service: VacancyService) {}
 	
 	@Get()
-	async getVacancies(@Query() queryParams: GetVacanciesParams) {
-		const vacancies = await this.service.findOpenVacancies(queryParams)
+	async getVacancies(@Query() pageQuery: PaginationParams, @Query() searchQuery: GetVacanciesParams) {
+		const maxPage = await this.service.getPagesAmount(pageQuery.limit, searchQuery)
+		const data = await this.service.findOpenVacancies(pageQuery, searchQuery)
 
 		return { 
-			vacancies, 
-			page: queryParams.page, 
-			limit: queryParams.limit 
+			vacancies: data[0],
+			amount: data[1], 
+			page: pageQuery.page,
+			maxPage,
+			limit: pageQuery.limit 
 		}
 	}
 
@@ -36,6 +41,13 @@ export class VacancyController {
 		return { message: 'Vacancy created successfully' }
 	}
 
+	@Put()
+	editVacancy(@Body() body: EditVacancyDto) {
+		this.service.editVacancy(body)
+
+		return { message: 'Vacancy was successfully updated' }
+	}
+
 	@Patch('close')
 	closeVacancy(@Body('id', ParseUUIDPipe) id: string) {
 		this.service.closeVacancy(id)
@@ -45,8 +57,15 @@ export class VacancyController {
 
 	@Patch('view')
 	registerView(@Body('id', ParseUUIDPipe) id: string) {
-		this.service.registerView(id)
+		this.service.registerVacancyView(id)
 
 		return { message: 'Vacancy\'s views were successfully updated' }
+	}
+
+	@Delete()
+	deleteVacancy(@Body('id', ParseUUIDPipe) id: string) {
+		this.service.deleteVacancy(id)
+
+		return { message: 'Vacancy was successfully deleted' }
 	}
 }

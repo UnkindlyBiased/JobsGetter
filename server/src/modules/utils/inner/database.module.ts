@@ -16,6 +16,7 @@ import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
                 database: 'JobsGetterMainDB',
                 entities: [__dirname + '/../../../models/entities/*.entity.{js,ts}'],
                 synchronize: true,
+                cache: true
             };
             return dbConfig
         },
