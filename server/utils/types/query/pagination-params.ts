@@ -1,4 +1,4 @@
-import { Expose, Type } from "class-transformer";
+import { Type } from "class-transformer";
 import { IsNumber, IsOptional, Min } from "class-validator";
 
 export class PaginationParams {
@@ -6,12 +6,10 @@ export class PaginationParams {
     @IsOptional()
     @Min(1)
     @Type(() => Number)
-    @Expose()
     page: number = 1
 
     @IsNumber()
     @Min(1)
     @Type(() => Number)
-    @Expose()
     limit: number
 }

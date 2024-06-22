@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from "typeorm";
 
-import { PositionType } from "../../../utils/types/position-level.type";
+import { PositionType } from "../../../utils/types/enums/position-level.type";
 
 @Entity('Vacancies')
 export class VacancyEntity {
