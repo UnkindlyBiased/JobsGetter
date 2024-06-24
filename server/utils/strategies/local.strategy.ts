@@ -12,7 +12,6 @@ export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
     }
 
     async validate(payload: UserPayloadDto) {
-        console.log('In local strategy')
         const user = await this.authService.verify(payload)
         return user
     }

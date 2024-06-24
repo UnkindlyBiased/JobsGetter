@@ -1,5 +1,7 @@
-import { Expose } from "class-transformer";
+import { Expose, Transform, plainToInstance } from "class-transformer";
 import { IsDate, IsNumber, IsOptional, IsString, IsUUID } from "class-validator";
+
+import { UserShortDto } from "../user/user-short.dto";
 
 export class VacancyShortDto {
     @Expose()
@@ -30,4 +32,8 @@ export class VacancyShortDto {
     @Expose()
     @IsNumber()
     views: number
+
+    @Expose()
+    @Transform(({ value }) => plainToInstance(UserShortDto, value, { excludeExtraneousValues: true }))
+    recruter: UserShortDto
 }

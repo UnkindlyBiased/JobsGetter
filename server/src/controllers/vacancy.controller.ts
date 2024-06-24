@@ -6,7 +6,6 @@ import { GetVacanciesParams } from '../models/dto/vacancy/get-vacancies.params.d
 import { PaginationParams } from '../../utils/types/query/pagination-params';
 import { EditVacancyDto } from '../models/dto/vacancy/edit-vacancy.dto';
 import { JwtGuard } from '../../utils/guards/jwt.guard';
-import { Request } from 'express';
 
 @Controller('vacancies')
 export class VacancyController {
@@ -14,10 +13,13 @@ export class VacancyController {
 	
 	@Get()
 	@UseGuards(JwtGuard)
-	async getVacancies(@Query() pageQuery: PaginationParams, @Query() searchQuery: GetVacanciesParams, @Req() req: Request) {
-		console.log(req.user)
+	async getVacancies(
+		@Query() pageQuery: PaginationParams, 
+		@Query() searchQuery: GetVacanciesParams
+	) {
+		console.log(pageQuery)
 		const maxPage = await this.service.getPagesAmount(pageQuery.limit, searchQuery)
-		const data = await this.service.findOpenVacancies(pageQuery, searchQuery)
+		const data = await this.service.findVacancies(pageQuery, searchQuery)
 
 		return { 
 			vacancies: data[0],

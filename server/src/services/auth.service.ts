@@ -15,7 +15,6 @@ export class AuthService {
     ) {}
 
     async register(input: CreateUserDto) {
-        console.log('Input', input)
         const userByEmail = await this.userService.getUserByCondition({ emailAddress: input.emailAddress })
         if (userByEmail) {
             throw new ConflictException('This user was already registered by this email')
@@ -29,9 +28,7 @@ export class AuthService {
 
         await this.userService.create(changedInput)
 
-        const payload = plainToInstance(UserPayloadDto, input, {
-            excludeExtraneousValues: true
-        })
+        const payload = plainToInstance(UserPayloadDto, input)
         return this.login(payload)
     }
     async login(payload: UserPayloadDto) {
@@ -43,7 +40,7 @@ export class AuthService {
         if (!user) {
             throw new BadRequestException('User was not given somehow')
         }
-        console.log(payload.password, user.password)
+        
         const arePasswordsEqual = await compare(payload.password, user.password)
 
         if (!arePasswordsEqual && payload.password !== user.password) throw new UnauthorizedException('Passwords does not match')

@@ -7,9 +7,11 @@ import { HttpExceptionFilter } from '../utils/error/http-exception.filter';
 
 @Module({
   imports: [FeatureModule, UtilModule],
-  providers: [{
-    provide: APP_FILTER,
-    useClass: HttpExceptionFilter
-  }]
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter
+    }
+  ]
 })
 export class AppModule {}

@@ -19,7 +19,7 @@ import { JwtGuard } from "../../../../utils/guards/jwt.guard";
             useFactory: (configService: ConfigService) => ({
                 secret: configService.get('JWT_SECRET'),
                 signOptions: {
-                    expiresIn: '30m'
+                    expiresIn: '30d'
                 }
             }),
             inject: [ConfigService]
