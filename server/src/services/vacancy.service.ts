@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger, UnprocessableEntityException } from "@nestjs/common";
 import { plainToInstance } from "class-transformer";
 
 import { VacancyRepository } from "../repositories/vacancy.repository";
@@ -20,7 +20,9 @@ export class VacancyService {
     async findVacancies(pageOptions: PaginationParams, searchOptions?: GetVacanciesParams): Promise<[VacancyShortDto[], number]> {
         const data = await this.repository.findVacancies(pageOptions, searchOptions)
 
-        const shortDtos = data[0].map(elem => plainToInstance(VacancyShortDto, elem))
+        const shortDtos = data[0].map(elem => plainToInstance(VacancyShortDto, elem, {
+            excludeExtraneousValues: true
+        }))
         return [shortDtos, data[1]]
     }
     getVacancyById(id: string): Promise<VacancyEntity> {
@@ -29,13 +31,15 @@ export class VacancyService {
     getPagesAmount(take: number, where?: GetVacanciesParams) {
         return this.repository.getPagesAmount(take, where)
     }
-    createVacancy(vacancy: CreateVacancyDto): void {
-        this.repository.createVacancy(vacancy)
+    createVacancy(vacancy: CreateVacancyDto, recruterId: string): void {
+        this.repository.createVacancy(vacancy, recruterId)
 
         this.logger.log(`Vacancy "${vacancy.name}" was created`)
     }
-    closeVacancy(id: string): void {
-        this.repository.closeVacancy(id)
+    async closeVacancy(id: string): Promise<boolean> {
+        const isAlreadyClosed = await this.repository.closeVacancy(id)
+
+        if (isAlreadyClosed) return true
 
         this.logger.log(`Vacancy with ID ${id} was closed`)
     }

@@ -1,7 +1,8 @@
 import { BadRequestException, ConflictException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { compare, hash } from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
-import { plainToInstance } from "class-transformer";
+import { instanceToPlain, plainToInstance } from "class-transformer";
+import { ConfigService } from "@nestjs/config";
 
 import { UserService } from "./user.service";
 import { CreateUserDto } from "../models/dto/user/create-user.dto";
@@ -11,7 +12,8 @@ import { UserPayloadDto } from "../models/dto/user/user-payload.dto";
 export class AuthService {
     constructor(
         private userService: UserService,
-        private jwtService: JwtService
+        private jwtService: JwtService,
+        private configService: ConfigService
     ) {}
 
     async register(input: CreateUserDto) {
@@ -33,7 +35,11 @@ export class AuthService {
     }
     async login(payload: UserPayloadDto) {
         const user = await this.verify(payload)
-        return this.jwtService.sign(JSON.parse(JSON.stringify(user)))
+        const plain = instanceToPlain(user)
+
+        return { 
+            accessToken: await this.jwtService.signAsync(plain)
+        }
     }
     async verify(payload: UserPayloadDto) {
         const user = await this.userService.getUserByCondition({ emailAddress: payload.emailAddress })

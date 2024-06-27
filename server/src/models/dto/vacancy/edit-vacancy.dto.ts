@@ -32,4 +32,7 @@ export class EditVacancyDto {
     @IsNumber({ maxDecimalPlaces: 6 }, { message: 'Maximal paycheck is wrong' })
     @IsOptional()
     maxPaycheck: number
+
+    @IsUUID()
+    recruterId: string
 }

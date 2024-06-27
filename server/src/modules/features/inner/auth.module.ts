@@ -27,6 +27,6 @@ import { JwtGuard } from "../../../../utils/guards/jwt.guard";
     ],
     controllers: [AuthController],
     providers: [CookieHelper, AuthService, LocalStrategy, JwtStrategy, JwtGuard],
-    exports: [AuthService, JwtModule]
+    exports: [AuthService, JwtModule, CookieHelper]
 })
 export class AuthModule {}

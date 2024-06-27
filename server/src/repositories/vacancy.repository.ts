@@ -44,8 +44,11 @@ export class VacancyRepository {
 
         return Math.ceil(allEntities / take)
     }
-    async createVacancy(vacancy: CreateVacancyDto): Promise<void> {
-        const entity = this.vacancyRep.create(vacancy)
+    async createVacancy(vacancy: CreateVacancyDto, recruterId: string): Promise<void> {
+        const entity = this.vacancyRep.create({
+            ...vacancy,
+            recruter: { id: recruterId }
+        })
 
         await this.vacancyRep.insert(entity)
     }
@@ -55,9 +58,18 @@ export class VacancyRepository {
             throw new NotFoundException('This vacancy doesn\'t exist')
         }
 
-        await this.vacancyRep.update(editInput.id, editInput)
+        const { recruterId, ...entity } = editInput
+
+        await this.vacancyRep.update(entity.id, entity)
     }
-    async closeVacancy(id: string): Promise<void> {
+    async closeVacancy(id: string) {
+        const vacancy = await this.vacancyRep.findOne({
+            where: { id },
+            select: { id: true, isClosed: true }
+        })
+
+        if (vacancy.isClosed === true) return true
+
         await this.vacancyRep.update(id, { isClosed: true })
     }
     async registerVacancyView(id: string): Promise<void> {

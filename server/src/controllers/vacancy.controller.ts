@@ -1,23 +1,25 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, ParseUUIDPipe, Patch, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, ForbiddenException, Get, NotFoundException, Param, ParseUUIDPipe, Patch, Post, Put, Query, UnprocessableEntityException } from '@nestjs/common';
 
 import { VacancyService } from '../services/vacancy.service';
 import { CreateVacancyDto } from '../models/dto/vacancy/create-vacancy.dto';
 import { GetVacanciesParams } from '../models/dto/vacancy/get-vacancies.params.dto';
 import { PaginationParams } from '../../utils/types/query/pagination-params';
 import { EditVacancyDto } from '../models/dto/vacancy/edit-vacancy.dto';
-import { JwtGuard } from '../../utils/guards/jwt.guard';
+import { Public } from '../../utils/decorators/public.decorator';
+import { CurrentUser } from '../../utils/decorators/current-user.decorator';
+import { UserEntity } from '../models/entities/user.entity';
+import { ResponseMessage } from '../../utils/decorators/response-message.decorator';
 
 @Controller('vacancies')
 export class VacancyController {
 	constructor(private service: VacancyService) {}
 	
 	@Get()
-	@UseGuards(JwtGuard)
+	@Public()
 	async getVacancies(
 		@Query() pageQuery: PaginationParams, 
 		@Query() searchQuery: GetVacanciesParams
 	) {
-		console.log(pageQuery)
 		const maxPage = await this.service.getPagesAmount(pageQuery.limit, searchQuery)
 		const data = await this.service.findVacancies(pageQuery, searchQuery)
 
@@ -33,45 +35,61 @@ export class VacancyController {
 	@Get(':id')
 	async getVacancyById(@Param('id', ParseUUIDPipe) id: string) {
 		const vacancy = await this.service.getVacancyById(id)
-		if (!vacancy) {
-			throw new NotFoundException('Vacancy was not found')
-		}
 
 		return vacancy
 	}
 
+	@ResponseMessage('Vacancy created successfully')
 	@Post()
-	createVacancy(@Body() body: CreateVacancyDto) {
-		this.service.createVacancy(body)
-
-		return { message: 'Vacancy created successfully' }
+	createVacancy(@Body() body: CreateVacancyDto, @CurrentUser() recruter: UserEntity) {
+		this.service.createVacancy(body, recruter.id)
 	}
 
+	@ResponseMessage('Vacancy was successfully updated')
 	@Put()
-	editVacancy(@Body() body: EditVacancyDto) {
+	editVacancy(@Body() body: EditVacancyDto, @CurrentUser() recruter: UserEntity) {
+		if (recruter.id !== body.recruterId) {
+			throw new ForbiddenException('This vacancy does not belong to you')
+		}
+
 		this.service.editVacancy(body)
-
-		return { message: 'Vacancy was successfully updated' }
 	}
 
+	@ResponseMessage('Vacancy was successfully closed')
 	@Patch('close')
-	closeVacancy(@Body('id', ParseUUIDPipe) id: string) {
-		this.service.closeVacancy(id)
+	async closeVacancy(
+		@Body('id', ParseUUIDPipe) id: string,
+		@Body('recruterId', ParseUUIDPipe) recruterId: string,
+		@CurrentUser() recruter: UserEntity
+	) {
+		if (recruter.id !== recruterId) {
+			throw new ForbiddenException('This vacancy does not belong to you')
+		}
 
-		return { message: 'Vacancy was successfully closed' } 
+		const isAlreadyClosed = await this.service.closeVacancy(id)
+		
+		if (isAlreadyClosed) {
+			throw new UnprocessableEntityException('Vacancy is already closed, so it cannot be reopened')
+		}
 	}
 
+	@ResponseMessage("Vacancy's views were successfully updated")
 	@Patch('view')
 	registerView(@Body('id', ParseUUIDPipe) id: string) {
 		this.service.registerVacancyView(id)
-
-		return { message: 'Vacancy\'s views were successfully updated' }
 	}
 
+	@ResponseMessage('Vacancy was successfully deleted')
 	@Delete()
-	deleteVacancy(@Body('id', ParseUUIDPipe) id: string) {
+	deleteVacancy(
+		@Body('id', ParseUUIDPipe) id: string,
+		@Body('recruterId', ParseUUIDPipe) recruterId: string,
+		@CurrentUser() recruter: UserEntity
+	) {
+		if (recruter.id !== recruterId) {
+			throw new ForbiddenException('This vacancy does not belong to you')
+		}
+		
 		this.service.deleteVacancy(id)
-
-		return { message: 'Vacancy was successfully deleted' }
 	}
 }

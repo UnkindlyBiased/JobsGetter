@@ -12,11 +12,11 @@ export class CookieInterceptor implements NestInterceptor {
         return next.handle().pipe(
             map(data => {
                 const res: Response = context.switchToHttp().getResponse();
-                const accessToken = data;
+                const tokens = data;
 
-                this.cookieHelper.setCookie(res, 'accessToken', accessToken);
+                this.cookieHelper.setCookie(res, 'accessToken', tokens.accessToken)
 
-                return { accessToken };
+                return tokens;
             })
         )
     }
