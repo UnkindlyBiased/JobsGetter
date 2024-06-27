@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, JoinColumn, ManyToOne } from "typeorm";
 
-import { PositionType } from "../../../utils/types/position-level.type";
+import { PositionType } from "../../../utils/types/enums/position-level.type";
+import { UserEntity } from "./user.entity";
 
 @Entity('Vacancies')
 export class VacancyEntity {
@@ -34,4 +35,11 @@ export class VacancyEntity {
 
     @Column({ default: 0 })
     views: number
+
+    @ManyToOne(() => UserEntity, {
+        cascade: true,
+        onDelete: 'SET NULL'
+    })
+    @JoinColumn()
+    recruter: UserEntity
 }

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger, UnprocessableEntityException } from "@nestjs/common";
 import { plainToInstance } from "class-transformer";
 
 import { VacancyRepository } from "../repositories/vacancy.repository";
@@ -17,8 +17,8 @@ export class VacancyService {
         this.logger = new Logger(VacancyService.name)
     }
 
-    async findOpenVacancies(pageOptions: PaginationParams, searchOptions?: GetVacanciesParams): Promise<[VacancyShortDto[], number]> {
-        const data = await this.repository.findOpenVacancies(pageOptions, searchOptions)
+    async findVacancies(pageOptions: PaginationParams, searchOptions?: GetVacanciesParams): Promise<[VacancyShortDto[], number]> {
+        const data = await this.repository.findVacancies(pageOptions, searchOptions)
 
         const shortDtos = data[0].map(elem => plainToInstance(VacancyShortDto, elem, {
             excludeExtraneousValues: true
@@ -31,21 +31,29 @@ export class VacancyService {
     getPagesAmount(take: number, where?: GetVacanciesParams) {
         return this.repository.getPagesAmount(take, where)
     }
-    createVacancy(vacancy: CreateVacancyDto): void {
-        this.repository.createVacancy(vacancy)
+    createVacancy(vacancy: CreateVacancyDto, recruterId: string): void {
+        this.repository.createVacancy(vacancy, recruterId)
 
         this.logger.log(`Vacancy "${vacancy.name}" was created`)
     }
-    closeVacancy(id: string): void {
-        this.repository.closeVacancy(id)
+    async closeVacancy(id: string): Promise<boolean> {
+        const isAlreadyClosed = await this.repository.closeVacancy(id)
+
+        if (isAlreadyClosed) return true
+
+        this.logger.log(`Vacancy with ID ${id} was closed`)
     }
     editVacancy(editBody: EditVacancyDto) {
         this.repository.editVacancy(editBody)
+
+        this.logger.log(`Vacancy with ID ${editBody.id} was edited`)
     }
     registerVacancyView(id: string): void {
         this.repository.registerVacancyView(id)
     }
     deleteVacancy(id: string): void {
         this.repository.deleteVacancy(id)
+
+        this.logger.log(`Vacancy with ID ${id} was removed`)
     }
 }

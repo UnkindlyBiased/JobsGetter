@@ -1,7 +1,7 @@
 import { Transform } from "class-transformer"
 import { IsEnum, IsNumber, IsOptional, IsString, IsUUID, MinLength } from "class-validator"
 
-import { PositionType } from "../../../../utils/types/position-level.type"
+import { PositionType } from "../../../../utils/types/enums/position-level.type"
 
 export class EditVacancyDto {
     @IsUUID()
@@ -32,4 +32,7 @@ export class EditVacancyDto {
     @IsNumber({ maxDecimalPlaces: 6 }, { message: 'Maximal paycheck is wrong' })
     @IsOptional()
     maxPaycheck: number
+
+    @IsUUID()
+    recruterId: string
 }

@@ -1,7 +1,7 @@
 import { IsEnum, IsNumber, IsOptional, IsString, MinLength } from "class-validator"
 import { Transform } from "class-transformer"
 
-import { PositionType } from "../../../../utils/types/position-level.type"
+import { PositionType } from "../../../../utils/types/enums/position-level.type"
 
 export class CreateVacancyDto {
     @IsString({ message: 'Name is either missing or too short' })
