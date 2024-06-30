@@ -9,6 +9,7 @@ import { Public } from '../../utils/decorators/public.decorator';
 import { CurrentUser } from '../../utils/decorators/current-user.decorator';
 import { UserEntity } from '../models/entities/user.entity';
 import { ResponseMessage } from '../../utils/decorators/response-message.decorator';
+import { Roles } from '../../utils/decorators/roles.decorator';
 
 @Controller('vacancies')
 export class VacancyController {
@@ -32,6 +33,7 @@ export class VacancyController {
 		}
 	}
 
+	@Public()
 	@Get(':id')
 	async getVacancyById(@Param('id', ParseUUIDPipe) id: string) {
 		const vacancy = await this.service.getVacancyById(id)

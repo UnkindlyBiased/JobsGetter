@@ -5,6 +5,7 @@ import { UtilModule } from './modules/utils/util.module';
 import { FeatureModule } from './modules/features/feature.module';
 import { HttpExceptionFilter } from '../utils/error/http-exception.filter';
 import { JwtGuard } from '../utils/guards/jwt.guard';
+import { RolesGuard } from '../utils/guards/roles.guard';
 
 @Module({
   imports: [FeatureModule, UtilModule],
@@ -16,6 +17,10 @@ import { JwtGuard } from '../utils/guards/jwt.guard';
     {
       provide: APP_GUARD,
       useClass: JwtGuard
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard
     }
   ]
 })

@@ -1,5 +1,7 @@
 import { Expose } from "class-transformer";
-import { IsEmail, IsString, IsUUID } from "class-validator";
+import { IsEmail, IsEnum, IsString, IsUUID } from "class-validator";
+
+import { UserRoles } from "../../../../utils/types/enums/user-roles.enum";
 
 export class UserTokenDto {
     @IsUUID()
@@ -13,4 +15,7 @@ export class UserTokenDto {
     @IsEmail()
     @Expose()
     emailAddress: string
+
+    @IsEnum(UserRoles)
+    role: UserRoles
 }
