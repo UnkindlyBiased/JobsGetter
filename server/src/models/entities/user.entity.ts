@@ -1,24 +1,28 @@
-import { Expose } from "class-transformer";
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+
 import { UserRoles } from "../../../utils/types/enums/user-roles.enum";
 
 @Entity('Users')
 export class UserEntity {
     @PrimaryGeneratedColumn('uuid')
-    @Expose()
     id: string
 
     @Column()
-    @Expose()
     username: string
 
+    @Column({
+        unique: true
+    })
+    shortName: string
+
     @Column()
-    @Expose()
     password: string
 
     @Column()
-    @Expose()
     emailAddress: string
+
+    @Column({ nullable: true })
+    profilePicLink: string
 
     @Column({
         type: 'enum',

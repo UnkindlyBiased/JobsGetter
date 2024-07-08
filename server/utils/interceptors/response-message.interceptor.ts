@@ -7,8 +7,8 @@ export class MessageResponseInterceptor implements NestInterceptor {
 
     intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
         return next.handle().pipe(
-            map(() => { 
-                return { message: this.message }    
+            map((_) => { 
+                return { message: this.message }
             })
         )
     }

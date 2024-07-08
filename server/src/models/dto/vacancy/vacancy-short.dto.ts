@@ -1,39 +1,30 @@
-import { Expose, Transform, plainToInstance } from "class-transformer";
-import { IsDate, IsNumber, IsOptional, IsString, IsUUID } from "class-validator";
-
-import { UserShortDto } from "../user/user-short.dto";
-
+import { Expose, plainToInstance, Transform } from "class-transformer";
+import { CompanyShortDto } from "../company/company-short.dto";
 export class VacancyShortDto {
     @Expose()
-    @IsUUID()
     id: string
     
     @Expose()
-    @IsString()
     name: string
 
     @Expose()
-    @IsString()
     description: string
 
     @Expose()
-    @IsNumber()
     minOrDefaultPaycheck: number
 
     @Expose()
-    @IsNumber()
-    @IsOptional()
     maxPaycheck: number
 
     @Expose()
-    @IsDate()
     creationDate: Date
 
     @Expose()
-    @IsNumber()
     views: number
 
     @Expose()
-    @Transform(({ value }) => plainToInstance(UserShortDto, value, { excludeExtraneousValues: true }))
-    recruter: UserShortDto
+    @Transform(({ value }) => plainToInstance(CompanyShortDto, value, {
+        strategy: 'exposeAll'
+    }))
+    company: CompanyShortDto
 }

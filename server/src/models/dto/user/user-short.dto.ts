@@ -1,16 +1,20 @@
 import { Expose } from "class-transformer";
-import { IsEmail, IsString, IsUUID } from "class-validator";
+
+import { UserRoles } from "../../../../utils/types/enums/user-roles.enum";
 
 export class UserShortDto {
     @Expose()
-    @IsUUID()
     id: string
 
     @Expose()
-    @IsString()
     username: string
 
     @Expose()
-    @IsEmail()
-    emailAddress: string
+    shortName: string
+
+    @Expose()
+    profilePicLink: string
+
+    @Expose()
+    role: UserRoles
 }

@@ -24,4 +24,7 @@ export class UserService {
     create(input: CreateUserDto) {
         return this.repository.create(input)    
     }
+    checkNickname(nickname: string) {
+        return this.repository.checkNickname(nickname)
+    }
 }

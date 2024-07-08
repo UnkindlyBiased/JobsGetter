@@ -25,4 +25,7 @@ export class UserRepository {
 
         return this.getUserByCondition({ emailAddress: input.emailAddress })
     }
+    async checkNickname(nickname: string) {
+        return this.userRep.existsBy({ shortName: nickname })
+    }
 }

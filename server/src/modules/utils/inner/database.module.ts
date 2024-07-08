@@ -1,4 +1,3 @@
-import 'reflect-metadata'
 import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
@@ -16,7 +15,10 @@ import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
                 database: 'JobsGetterMainDB',
                 entities: [__dirname + '/../../../models/entities/*.entity.{js,ts}'],
                 synchronize: true,
-                cache: true
+                cache: {
+                    alwaysEnabled: true,
+                    duration: 10000
+                }
             };
             return dbConfig
         },

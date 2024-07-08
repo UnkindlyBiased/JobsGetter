@@ -21,7 +21,7 @@ export class VacancyRepository {
             take: pageOptions.limit,
             skip: pageOptions.limit * (pageOptions.page - 1),
             cache: 30000,
-            relations: ['recruter']
+            relations: ['company']
         })
         return [entities, amount]
     }

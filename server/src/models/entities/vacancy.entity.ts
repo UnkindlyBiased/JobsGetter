@@ -1,7 +1,9 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, JoinColumn, ManyToOne } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, JoinColumn, ManyToOne, ManyToMany } from "typeorm";
 
 import { PositionType } from "../../../utils/types/enums/position-level.type";
 import { UserEntity } from "./user.entity";
+import { CompanyEntity } from "./company.entity";
+import { CategoryEntity } from "./category.entity";
 
 @Entity('Vacancies')
 export class VacancyEntity {
@@ -37,9 +39,18 @@ export class VacancyEntity {
     views: number
 
     @ManyToOne(() => UserEntity, {
-        cascade: true,
         onDelete: 'SET NULL'
     })
     @JoinColumn()
     recruter: UserEntity
+
+    @ManyToOne(() => CompanyEntity, {
+        onDelete: 'SET NULL',
+        cascade: true
+    })
+    @JoinColumn()
+    company: CompanyEntity
+
+    @ManyToMany(() => CategoryEntity)
+    categories: CategoryEntity[]
 }

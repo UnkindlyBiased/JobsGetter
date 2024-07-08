@@ -17,10 +17,6 @@ import { RolesGuard } from '../utils/guards/roles.guard';
     {
       provide: APP_GUARD,
       useClass: JwtGuard
-    },
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard
     }
   ]
 })
